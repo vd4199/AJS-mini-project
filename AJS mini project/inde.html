@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="eventApp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aphrodite Events - AngularJS</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-animate.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body ng-controller="MainCtrl">
+    
+    <header class="header">
+      <a href="#!/home" class="logo"><span>A</span>phrodite Events</a>
+      <nav class="navbar" ng-class="{'active': menuActive}">
+        <a href="#!/home" ng-click="toggleMenu()">home</a>
+        <a href="#!/services" ng-click="toggleMenu()">services</a>
+        <a href="#!/pricing" ng-click="toggleMenu()">pricing</a>
+        <a href="#!/contact" ng-click="toggleMenu()">contact</a>
+      </nav>
+      <div id="menu-bars" class="fas fa-bars" ng-class="{'fa-times': menuActive}" ng-click="toggleMenu()"></div>
+    </header>
+
+    <div ng-view class="view-animate"></div>
+
+    <event-footer></event-footer>
+
+    <div class="theme-toggler" ng-class="{'active': themeActive}">
+      <div class="toggle-btn" ng-click="themeActive = !themeActive">
+        <i class="fas fa-cog"></i>
+      </div>
+      <h3>choose color</h3>
+      <div class="buttons">
+        <div class="theme-btn" ng-repeat="color in themeColors" ng-style="{'background': color}" ng-click="changeTheme(color)"></div>
+      </div>
+    </div>
+
+    <script type="text/ng-template" id="views/home.html">
+      <section class="home" id="home">
+        <div class="content">
+          <h3>Where your ideas take off <span> Aphrodite Events </span></h3>
+          <a href="#!/contact" class="btn">get quote</a>
+        </div>
+      </section>
+
+      <section class="service" id="service">
+        <h1 class="heading">our <span>services</span></h1>
+        <input type="text" ng-model="searchService" placeholder="Search services..." class="search-box">
+        
+        <div class="box-container">
+          <div class="box" ng-repeat="service in services | filter:searchService | orderBy:'title'">
+            <i class="{{service.icon}}"></i>
+            <h3>{{service.title}}</h3>
+            <p>{{service.desc}}</p>
+          </div>
+        </div>
+      </section>
+    </script>
+
+    <script type="text/ng-template" id="views/pricing.html">
+      <section class="price" id="price">
+        <h1 class="heading">our <span>pricing</span></h1>
+        <div class="box-container">
+          <div class="box" ng-repeat="plan in pricingPlans">
+            <h3 class="title">{{plan.tier}}</h3>
+            <h3 class="amount">{{plan.amount | currency:"₹":0}}</h3>
+            <ul>
+              <li ng-repeat="feature in plan.features"><i class="fas fa-check"></i> {{feature}}</li>
+            </ul>
+            <a href="#" class="btn">check out</a>
+          </div>
+        </div>
+      </section>
+    </script>
+
+    <script type="text/ng-template" id="views/contact.html">
+      <section class="contact" id="contact">
+        <h1 class="heading"><span>contact</span> us</h1>
+        
+        <form name="contactForm" ng-submit="submitForm(contactForm.$valid)" novalidate>
+          <div class="inputBox">
+            <input type="text" name="userName" ng-model="user.name" placeholder="name" required ng-minlength="3" ng-class="{'error-input': contactForm.userName.$invalid && contactForm.userName.$touched}" />
+            <input type="email" name="userEmail" ng-model="user.email" placeholder="email" required ng-class="{'error-input': contactForm.userEmail.$invalid && contactForm.userEmail.$touched}" />
+          </div>
+          
+          <div class="validation-messages" ng-show="contactForm.$submitted || contactForm.userName.$touched">
+            <span class="error-text" ng-show="contactForm.userName.$error.required">Name is required.</span>
+            <span class="error-text" ng-show="contactForm.userName.$error.minlength">Name must be at least 3 characters.</span>
+          </div>
+          <div class="validation-messages" ng-show="contactForm.$submitted || contactForm.userEmail.$touched">
+            <span class="error-text" ng-show="contactForm.userEmail.$error.required">Email is required.</span>
+            <span class="error-text" ng-show="contactForm.userEmail.$error.email">Invalid email format.</span>
+          </div>
+
+          <textarea name="userMessage" ng-model="user.message" placeholder="message" cols="30" rows="10" required></textarea>
+          
+          <input type="submit" value="send message" class="btn" ng-disabled="contactForm.$invalid" />
+        </form>
+      </section>
+    </script>
+
+    <script src="app.js"></script>
+  </body>
+</html>
